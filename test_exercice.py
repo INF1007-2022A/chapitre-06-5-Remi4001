@@ -96,7 +96,7 @@ class TestExercice(unittest.TestCase):
             (None, "</h1>"),
             (None, "</body>"),
             (" ", None),
-            (None, ".")
+            (None, "."),
         ]
 
         output = [exercice.get_tag_prefix(v, otags, ctags) for v in values]
@@ -104,6 +104,55 @@ class TestExercice(unittest.TestCase):
             output,
             expected,
             "Mauvaise identification des balises au début d'un texte"
+        )
+
+    def test_check_tags(self):
+        tags = ("html", "head", "title", "body", "h1")
+        comment_tags = ("<!--", "-->")
+        values = [
+            "<html>"
+            "  <head>"
+            "    <title>"
+            "      <!-- Ici j'ai écrit qqch -->"
+            "      Example"
+            "    </title>"
+            "  </head>"
+            "  <body>"
+            "    <h1>Hello, world</h1>"
+            "    <!-- Les tags vides sont ignorés -->"
+            "    <br>"
+            "    <h1/>"
+            "  </body>"
+            "</html>",
+            "<html>"
+            "  <head>"
+            "    <title>"
+            "      <!-- Ici j'ai écrit qqch -->"
+            "      Example"
+            "    <!-- Il manque un end tag"
+            "    </title>-->"
+            "  </head>"
+            "</html>",
+            "<html>"
+            "  <head>"
+            "    <title>"
+            "      Commentaire mal formé -->"
+            "      Example"
+            "    </title>"
+            "  </head>"
+            "</html>",
+        ]
+        expected = [
+            True,
+            False,
+            False,
+        ]
+
+        output = [exercice.check_tags(v, tags, comment_tags) for v in values]
+        self.assertListEqual(
+            output,
+            expected,
+            "Mauvaise vérification des balises HTML"
         )
 
 
