@@ -23,7 +23,27 @@ def check_brackets(text, brackets):
 
 
 def remove_comments(full_text, comment_start, comment_end):
-    return ""
+    text = ""
+    comment = False
+
+    i = 0
+    while i < len(full_text):
+        if full_text[i:i + len(comment_start)] == comment_start and not comment:
+            comment = True
+            i += len(comment_start) - 1
+        elif full_text[i:i + len(comment_end)] == comment_end:
+            if comment:
+                comment = False
+                i += len(comment_end) - 1
+            else:
+                return None
+        elif not comment:
+            text += full_text[i]
+        i += 1
+
+    if comment:
+        return None
+    return text
 
 
 def get_tag_prefix(text, opening_tags, closing_tags):
