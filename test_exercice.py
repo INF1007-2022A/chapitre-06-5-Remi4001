@@ -41,7 +41,7 @@ class TestExercice(unittest.TestCase):
             "Hello, OOGAH BOOGAH*/ world!",
             "Hello, /*/ OOGAH BOOGAH world!",
             "Hello, */ OOGAH BOOGAH /*world!",
-            "Hello, /**/world!",
+            "Hello, /*/**/world!",
         ]
         expected = [
             "Hello, world!",
@@ -52,7 +52,25 @@ class TestExercice(unittest.TestCase):
             "Hello, world!",
         ]
 
-        output = [exercice.remove_comments(v, comment[0], comment[1]) for v in values]
+        output = [exercice.remove_comments(
+            v, comment[0], comment[1]) for v in values]
+        self.assertListEqual(
+            output,
+            expected,
+            "Mauvais retrait des commentaires"
+        )
+
+    def test_remove_comments2(self):
+        values = [
+            ["Hello, 1 OOGAH BOOGAH 23456world!", "1", "23456"],
+            ["Hello, world! ", "l", " "],
+        ]
+        expected = [
+            "Hello, world!",
+            "Hewor",
+        ]
+
+        output = [exercice.remove_comments(v[0], v[1], v[2]) for v in values]
         self.assertListEqual(
             output,
             expected,
