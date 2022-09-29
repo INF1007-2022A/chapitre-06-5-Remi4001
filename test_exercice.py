@@ -77,6 +77,35 @@ class TestExercice(unittest.TestCase):
             "Mauvais retrait des commentaires"
         )
 
+    def test_get_tag_prefix(self):
+        otags = ("<head>", "<body>", "<h1>", " ")
+        ctags = ("</head>", "</body>", "</h1>", ".")
+        values = [
+            "<body><h1>Hello!</h1></body>",
+            "<h1>Hello!</h1></body>",
+            "Hello!</h1></body>",
+            "</h1></body>",
+            "</body>",
+            " </body>",
+            ".</body>",
+        ]
+        expected = [
+            ("<body>", None),
+            ("<h1>", None),
+            (None, None),
+            (None, "</h1>"),
+            (None, "</body>"),
+            (" ", None),
+            (None, ".")
+        ]
+
+        output = [exercice.get_tag_prefix(v, otags, ctags) for v in values]
+        self.assertListEqual(
+            output,
+            expected,
+            "Mauvaise identification des balises au début d'un texte"
+        )
+
 
 if __name__ == '__main__':
     if not os.path.exists('logs'):
