@@ -8,18 +8,18 @@ def check_brackets(text, brackets):
     opening = dict(zip(brackets[0::2], brackets[1::2]))
     closing = dict(zip(brackets[1::2], brackets[0::2]))
 
-    bracket_stack = deque()
+    tag_stack = deque()
 
     for t in text:
         if t in opening:
-            bracket_stack.append(opening[t])
+            tag_stack.append(opening[t])
         elif t in closing:
-            if bracket_stack and bracket_stack[-1] == t:
-                bracket_stack.pop()
+            if tag_stack and tag_stack[-1] == t:
+                tag_stack.pop()
             else:
                 return False
 
-    return not bracket_stack
+    return not tag_stack
 
 
 def remove_comments(full_text, comment_start, comment_end):
@@ -57,7 +57,34 @@ def get_tag_prefix(text, opening_tags, closing_tags):
 
 
 def check_tags(full_text, tag_names, comment_tags):
-    return False
+    opening = dict(zip(["<" + tag + ">" for tag in tag_names],
+                       ["</" + tag + ">" for tag in tag_names]))
+    closing = dict(zip(["</" + tag + ">" for tag in tag_names],
+                       ["<" + tag + ">" for tag in tag_names]))
+    text = remove_comments(full_text, comment_tags[0], comment_tags[1])
+
+    if text is None:
+        return False
+
+    tag_stack = deque()
+
+    i = 0
+    while i < len(text):
+        for o_tag in opening:
+            if text[i:i + len(o_tag)] == o_tag:
+                tag_stack.append(opening[o_tag])
+                i += len(o_tag) - 1
+                break
+        for c_tag in closing:
+            if text[i:i + len(c_tag)] == c_tag:
+                if tag_stack and tag_stack[-1] == c_tag:
+                    tag_stack.pop()
+                    break
+                else:
+                    return False
+        i += 1
+
+    return not tag_stack
 
 
 if __name__ == "__main__":
