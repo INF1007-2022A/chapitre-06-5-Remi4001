@@ -47,6 +47,12 @@ def remove_comments(full_text, comment_start, comment_end):
 
 
 def get_tag_prefix(text, opening_tags, closing_tags):
+    for tag in opening_tags:
+        if text[:len(tag)] == tag:
+            return (tag, None)
+    for tag in closing_tags:
+        if text[:len(tag)] == tag:
+            return (None, tag)
     return (None, None)
 
 
